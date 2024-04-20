@@ -12,34 +12,39 @@
             </a-layout-header>
         </a-affix>
         <a-layout>
-            <a-layout-sider class="body-sidebar" breakpoint="lg" collapsed-width="0" @collapse="onCollapse"
-                @breakpoint="onBreakpoint">
-                <a-menu class="body-sidebar" v-model:selectedKeys="selectedKeys" theme="light" mode="inline">
-                    <a-menu-item key="1">
-                        <user-outlined />
-                        <span class="nav-text">学生信息</span>
-                    </a-menu-item>
-                    <a-menu-item key="2">
-                        <video-camera-outlined />
-                        <span class="nav-text">课程信息</span>
-                    </a-menu-item>
-                    <a-menu-item key="3">
-                        <upload-outlined />
-                        <span class="nav-text">成绩管理</span>
-                    </a-menu-item>
-                    <a-menu-item key="4">
-                        <user-outlined />
-                        <span class="nav-text">关于项目</span>
-                    </a-menu-item>
-                </a-menu>
-            </a-layout-sider>
-            <a-layout>
+            <a-affix :offset-top="64">
+                <a-layout-sider class="body-sidebar" breakpoint="lg" collapsed-width="0" @collapse="onCollapse"
+                    @breakpoint="onBreakpoint">
+                    <a-menu class="body-sidebar-items" v-model:selectedKeys="selectedKeys" theme="light" mode="inline">
+                        <a-menu-item key="1">
+                            <user-outlined />
+                            <router-link to="/student-info"><span class="nav-text">学生信息</span></router-link>
+                        </a-menu-item>
+                        <a-menu-item key="2">
+                            <video-camera-outlined />
+                            <router-link to="/course-info"><span class="nav-text">课程信息</span></router-link>
+                        </a-menu-item>
+                        <a-menu-item key="3">
+                            <upload-outlined />
+                            <router-link to="/score-info"><span class="nav-text">成绩信息</span></router-link>
+                        </a-menu-item>
+                        <a-menu-item key="4">
+                            <user-outlined />
+                            <router-link to="/about-project"><span class="nav-text">关于项目</span></router-link>
+                        </a-menu-item>
+                    </a-menu>
+                </a-layout-sider>
+            </a-affix>
+            <a-layout class="body-content">
                 <a-layout-content :style="{ margin: '24px 16px 0' }">
                     <!-- <AboutProject /> -->
                     <StudentInfo />
+                    <!-- <CourseInfo /> -->
+                    <!-- <ScoreInfo /> -->
+                    <router-view></router-view>
                 </a-layout-content>
                 <a-layout-footer style="text-align: center">
-                    Created by Someijam (Using Ant Design ©2018 )
+                    Created by Someijam 2024 (Using Ant Design ©2018 )
                 </a-layout-footer>
             </a-layout>
         </a-layout>
@@ -49,7 +54,9 @@
 <script setup>
 import { ref } from 'vue';
 // import AboutProject from './contentpages/AboutProject.vue';
-import StudentInfo  from './contentpages/StudentInfo.vue';
+import StudentInfo from './contentpages/StudentInfo.vue';
+// import CourseInfo from './contentpages/CourseInfo.vue';
+// import ScoreInfo from './contentpages/ScoreInfo.vue';
 
 const onCollapse = (collapsed, type) => {
     console.log(collapsed, type);
@@ -91,12 +98,14 @@ const selectedKeys = ref(['4']);
     display: flex;
     align-items: center;
 }
+
 .navbar-left img {
     /* vertical-align: middle; */
     width: 40px;
     height: auto;
     margin-inline-end: .8rem;
 }
+
 .logo-text {
     color: #fff;
     font-size: 1.25rem;
@@ -124,7 +133,8 @@ const selectedKeys = ref(['4']);
     0.3em 0.3em 1em rgba(0, 0, 0, 0.3); */
 }
 
-.body-sidebar {
+.body-sidebar-items {
+    min-height: 100vh;
     background: #eeeeee;
 }
 </style>

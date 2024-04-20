@@ -1,58 +1,21 @@
 <template>
-    <div class="student-info-top">
-        <a-typography-title :level="3">学生基本信息</a-typography-title>
+    <div class="score-info-top">
+        <a-typography-title :level="3">学生成绩管理</a-typography-title>
         <div>
             <a-button type="primary" style="margin-inline-end: .5em;">
                 <template #icon>
                     <ReloadOutlined />
                 </template>
             </a-button>
-            <a-button type="primary" style="margin-bottom: 8px">+ 新同学</a-button>
+            <a-button type="primary" style="margin-bottom: 8px">+ 录入成绩</a-button>
         </div>
     </div>
     <a-table :columns="columns" :data-source="dataSource" bordered>
         <template #bodyCell="{ column, text, record }">
-            <template v-if="['name', 'age', 'key'].includes(column.dataIndex)">
+            <template v-if="['s_no', 's_name','c_no', 'c_name','score'].includes(column.dataIndex)">
                 <div>
                     <a-input v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]"
                         style="margin: -5px 0" />
-                    <template v-else>
-                        {{ text }}
-                    </template>
-                </div>
-            </template>
-            <template v-else-if="column.dataIndex === 'sex'">
-                <div>
-                    <a-radio-group v-if="editableData[record.key]"
-                        v-model:value="editableData[record.key][column.dataIndex]" style="margin: -5px 0">
-                        <a-radio-button value="男">男</a-radio-button>
-                        <a-radio-button value="女">女</a-radio-button>
-                    </a-radio-group>
-                    <template v-else>
-                        {{ text }}
-                    </template>
-                </div>
-            </template>
-            <template v-else-if="column.dataIndex === 'dept'">
-                <div>
-                    <a-select v-if="editableData[record.key]" v-model:value="editableData[record.key][column.dataIndex]"
-                        style="margin: -5px 0">
-                        <a-select-option value="IS">IS</a-select-option>
-                        <a-select-option value="CS">CS</a-select-option>
-                        <a-select-option value="MA">MA</a-select-option>
-                    </a-select>
-                    <template v-else>
-                        {{ text }}
-                    </template>
-                </div>
-            </template>
-            <template v-else-if="column.dataIndex === 'scholarship'">
-                <div>
-                    <a-radio-group v-if="editableData[record.key]"
-                        v-model:value="editableData[record.key][column.dataIndex]" style="margin: -5px 0">
-                        <a-radio-button value="是">是</a-radio-button>
-                        <a-radio-button value="否">否</a-radio-button>
-                    </a-radio-group>
                     <template v-else>
                         {{ text }}
                     </template>
@@ -87,33 +50,33 @@ import {
 const columns = [
     {
         title: '学号',
-        dataIndex: 'key',
+        dataIndex: 's_no',
         width: '15%',
     },
     {
         title: '姓名',
-        dataIndex: 'name',
+        dataIndex: 's_name',
         width: '20%',
     },
     {
-        title: '性别',
-        dataIndex: 'sex',
-        width: '12%',
+        title: '课程序号',
+        dataIndex: 'c_no',
+        width: '10%',
+    },  
+    {
+        title: '课程名称',
+        dataIndex: 'c_name',
+        width: '20%',
     },
     {
-        title: '年龄',
-        dataIndex: 'age',
+        title: '成绩',
+        dataIndex: 'score',
         width: '10%',
     },
     {
-        title: '专业',
-        dataIndex: 'dept',
-        width: '20%',
-    },
-    {
-        title: '奖学金',
-        dataIndex: 'scholarship',
-        width: '12%',
+        title: ' ',
+        dataIndex: 'reserve',
+        width: '13%',
     },
     {
         title: '操作',
@@ -121,14 +84,14 @@ const columns = [
     },
 ];
 const data = [];
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 10; i++) {
     data.push({
-        key: (202112000 + i).toString(),
-        sex: i % 3 === 0 ? '男' : '女',
-        name: `Edrward ${i}`,
-        age: 32,
-        dept: `CS`,
-        scholarship: i % 2 === 0 ? '是' : '否',
+        key: i.toString(),
+        s_no: (202112000+i).toString(),
+        s_name: `Edward No.${i}`,
+        c_no: (i+1).toString(),
+        c_name: `Course ${i}`,
+        score: Math.floor(Math.random() * 100),
     });
 }
 const dataSource = ref(data);
@@ -152,9 +115,9 @@ const onDelete = key => {
     margin-right: 8px;
 }
 
-.student-info-top {
+.score-info-top {
     display: flex;
     justify-content: space-between;
     margin-bottom: 16px;
-}
+}   
 </style>
