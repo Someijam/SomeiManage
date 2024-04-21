@@ -1,24 +1,20 @@
-# someimanage
+# 数据库：学生成绩管理系统 someimanage
 
-## Project setup
-```
+## 命名约定
+
+请大致遵守如下约定
+
+* CSS的class：`[page]-[compo]-[dataname]-(pos)` 如 `index-head-navbar-logo-top` 其中dataname可以嵌套“-”
+* script内的常量以及变量：`[page]_[compo]_[data]` 如 `student_table_contents`
+* script内的函数名：`[page]_[compo]_[func]()` 如 `score_drawer_newsc_show()`
+
+## 初始化项目
+```shell
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
-```
-
-### Compiles and minifies for production
-```
 npm run build
-```
-
-### Lints and fixes files
-```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 自定义设置
+参照 [Configuration Reference](https://cli.vuejs.org/config/).
