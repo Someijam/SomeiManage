@@ -7,7 +7,64 @@
                     <ReloadOutlined />
                 </template>
             </a-button>
-            <a-button type="primary" style="margin-bottom: 8px">+ 新同学</a-button>
+            <a-button type="primary" style="margin-bottom: 8px" @click="show_drawer">+ 新的同学</a-button>
+            <a-drawer title="添加新同学" :width="480" :open="open" :body-style="{ paddingBottom: '80px' }"
+                :footer-style="{ textAlign: 'right' }" @close="onClose">
+                <a-form :model="form" :rules="rules" layout="vertical">
+                    <a-row :gutter="16">
+                        <a-col :span="12">
+                            <a-form-item label="姓名" name="add_s_name">
+                                <a-input v-model:value="form.add_s_name" placeholder="刘伟" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-form-item label="学号" name="add_s_no">
+                                <a-input v-model:value="form.add_s_no" placeholder="202112000" />
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row :gutter="16">
+                        <a-col :span="12">
+                            <a-form-item label="性别" name="add_s_sex">
+                                <a-radio-group v-model:value="form.add_s_sex">
+                                    <a-radio-button value="男">男</a-radio-button>
+                                    <a-radio-button value="女">女</a-radio-button>
+                                </a-radio-group>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-form-item label="年龄" name="add_s_age">
+                                <a-input v-model:value="form.add_s_age" placeholder="38" />
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row :gutter="16">
+                        <a-col :span="12">
+                            <a-form-item label="专业" name="add_s_dept">
+                                <a-select v-model:value="form.add_s_dept">
+                                    <a-select-option value="IS">IS</a-select-option>
+                                    <a-select-option value="CS">CS</a-select-option>
+                                    <a-select-option value="MA">MA</a-select-option>
+                                </a-select>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-form-item label="奖学金" name="add_s_scholarship">
+                                <a-radio-group v-model:value="form.add_s_scholarship">
+                                    <a-radio-button value="是">是</a-radio-button>
+                                    <a-radio-button value="否">否</a-radio-button>
+                                </a-radio-group>
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                </a-form>
+                <template #extra>
+                    <a-space>
+                        <a-button @click="onClose">取消</a-button>
+                        <a-button type="primary" @click="onClose">添加</a-button>
+                    </a-space>
+                </template>
+            </a-drawer>
         </div>
     </div>
     <a-table :columns="columns" :data-source="dataSource" bordered>
@@ -145,6 +202,60 @@ const cancel = key => {
 };
 const onDelete = key => {
     dataSource.value = dataSource.value.filter(item => key !== item.key);
+};
+
+const form = reactive({
+    add_s_name: '',
+    add_s_no: '',
+    add_s_sex: '',
+    add_s_age: '',
+    add_s_dept: '',
+    add_s_scholarship: '',
+});
+const rules = {
+    add_s_name: [
+        {
+            required: true,
+            message: 'Please enter user name',
+        },
+    ],
+    add_s_no: [
+        {
+            required: true,
+            message: 'Please enter user name',
+        },
+    ],
+    add_s_sex: [
+        {
+            required: true,
+            message: 'Please enter user name',
+        },
+    ],
+    add_s_age: [
+        {
+            required: true,
+            message: 'Please enter user name',
+        },
+    ],
+    add_s_dept: [
+        {
+            required: true,
+            message: 'Please enter user name',
+        },
+    ],
+    add_s_scholarship: [
+        {
+            required: true,
+            message: 'Please enter user name',
+        },
+    ],
+};
+const open = ref(false);
+const show_drawer = () => {
+    open.value = true;
+};
+const onClose = () => {
+    open.value = false;
 };
 </script>
 <style scoped>

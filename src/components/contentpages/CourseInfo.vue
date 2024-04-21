@@ -7,7 +7,42 @@
                     <ReloadOutlined />
                 </template>
             </a-button>
-            <a-button type="primary" style="margin-bottom: 8px">+ 新课程</a-button>
+            <a-button type="primary" style="margin-bottom: 8px" @click="show_drawer">+ 新的课程</a-button>
+            <a-drawer title="添加课程" :width="480" :open="open" :body-style="{ paddingBottom: '80px' }"
+                :footer-style="{ textAlign: 'right' }" @close="onClose">
+                <a-form :model="form" :rules="rules" layout="vertical">
+                    <a-row :gutter="16">
+                        <a-col :span="12">
+                            <a-form-item label="课程名称" name="add_c_name">
+                                <a-input v-model:value="form.add_c_name" placeholder="计算机组成原理" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-form-item label="课程编号" name="add_c_no">
+                                <a-input v-model:value="form.add_c_no" placeholder="CS101" />
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                    <a-row :gutter="16">
+                        <a-col :span="12">
+                            <a-form-item label="前置课程" name="add_c_pno">
+                                <a-input v-model:value="form.add_c_pno" placeholder="CS100" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
+                            <a-form-item label="学分" name="add_credit">
+                                <a-input v-model:value="form.add_credit" placeholder="3" />
+                            </a-form-item>
+                        </a-col>
+                    </a-row>
+                </a-form>
+                <template #extra>
+                    <a-space>
+                        <a-button @click="onClose">取消</a-button>
+                        <a-button type="primary" @click="onClose">添加</a-button>
+                    </a-space>
+                </template>
+            </a-drawer>
         </div>
     </div>
     <a-table :columns="columns" :data-source="dataSource" bordered>
@@ -69,8 +104,8 @@ const columns = [
         width: '10%',
     },
     {
-        title: ' ',
-        dataIndex: 'reserve',
+        title: '选课人数',
+        dataIndex: 'c_selectednum',
         width: '30%',
     },
     {
@@ -103,6 +138,34 @@ const cancel = key => {
 const onDelete = key => {
     dataSource.value = dataSource.value.filter(item => key !== item.key);
 };
+const form = reactive({
+    add_c_name: '',
+    add_c_no: '',
+    add_c_pno: '',
+    add_credit: '',
+});
+const rules = {
+    add_c_name: [
+        { required: true, message: '请输入课程名称'},
+    ],
+    add_c_no: [
+        { required: true, message: '请输入课程序号'},
+    ],
+    add_c_pno: [
+        { required: true, message: '请输入前置课程'},
+    ],
+    add_credit: [
+        { required: true, message: '请输入学分'},
+    ], 
+};
+const open = ref(false);
+const show_drawer = () => {
+    open.value = true;
+};
+const onClose = () => {
+    open.value = false;
+};
+
 </script>
 <style scoped>
 .editable-row-operations a {

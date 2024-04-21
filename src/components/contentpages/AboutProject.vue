@@ -1,11 +1,20 @@
 <template>
-    <div :style="{ padding: '24px', background: '#fff', minHeight: '100%' }">
-        Apple 今日宣布在全球拓展清洁能源项目的新进展，以继续推进实现 Apple 2030 目标，也就是到 2030 年在公司整个价值链完全实现碳中和的宏伟目标。Apple
-        全球运营及制造供应链现已使用超过 18 千兆瓦清洁电能，是 2020 年的三倍以上。Apple 将在美国和欧洲投资新的太阳能项目，帮助解决用户为 Apple 设备充电和供电所使用的电能。
-        作为更广泛的环保工作的一部分，Apple 还在持续推进实现另外一项宏伟的 2030 目标：在水资源紧张的地区，补偿 100% 公司运营所消耗的淡水。这方面的工作包括推出新的合作项目，在接下来的
-        20 年里通过恢复土壤含水层和河流，以及资助获取饮用水等方式，提供近 70 亿加仑（约 2650 万吨）淡水的水资源效益。和清洁能源一样，Apple
-        深化了整个供应链的清洁水资源承诺：Apple 供应商去年累计共已节约了超过 120 亿加仑（约 4542 万吨）淡水；自公司 2013 年启动供应商清洁用水项目以来，总计已节约 760
-        亿加仑（约 2.87 亿吨）淡水。
-        “清洁能源和水资源是健康社区的基础，也是负责任企业的重要基石。
-    </div>
+    <a-typography>
+        <a-typography-title :level="2">介绍</a-typography-title>
+        <a-typography-paragraph>
+            基于Vue的学生管理系统前端页面。
+        </a-typography-paragraph>
+        <a-typography-paragraph>
+            项目已在
+            <GithubOutlined />
+            <a href="https://github.com/Someijam/SomeiManage" target="_blank">Github</a>
+            上开源。保留为Someijam所有的权利。
+        </a-typography-paragraph>
+
+    </a-typography>
 </template>
+<script setup>
+import {
+    GithubOutlined
+} from '@ant-design/icons-vue';
+</script>
