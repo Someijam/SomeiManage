@@ -158,15 +158,25 @@ const onClose = () => {
     course_newbutton_open.value = false;
 };
 
-for (let i = 0; i < 10; i++) {
-    course_table_data.push({
-        key: i.toString(),
-        c_no: (i+1).toString(),
-        c_name: `Course ${i}`,
-        c_pno: (i-1).toString(),
-        credit: i%2 === 0 ? 2 : 3,
-    });
+const getCourseTable = () => {
+    fetch('http://localhost:5880/query/coursesinfo')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            course_table_data.value = data.dataarr.map((item, index) => ({
+                key: index,
+                c_no: item.key,
+                c_name: item.name,
+                c_pno: item.pno === null ? '(无)' : item.pno,
+                credit: item.credit,
+                c_selectednum: item.student_count,
+            }));
+            course_dataSource.value = cloneDeep(course_table_data.value);
+        });
 }
+
+getCourseTable();
+
 </script>
 
 <style scoped>

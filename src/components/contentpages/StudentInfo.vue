@@ -144,7 +144,7 @@ import { ReloadOutlined } from '@ant-design/icons-vue';
 const student_table_columns = [
     {
         title: '学号',
-        dataIndex: 'key',
+        dataIndex: 'no',
         width: '15%',
     },
     {
@@ -251,16 +251,28 @@ const onClose = () => {
     student_newbutton_open.value = false;
 };
 
-for (let i = 0; i < 100; i++) {
-    student_table_data.push({
-        key: (202112000 + i).toString(),
-        sex: i % 3 === 0 ? '男' : '女',
-        name: `Edrward ${i}`,
-        age: 32,
-        dept: `CS`,
-        scholarship: i % 2 === 0 ? '是' : '否',
-    });
+// 127.0.0.1:5880/query/studentsinfo
+const getStudentTable = () => {
+    fetch('http://localhost:5880/query/studentsinfo')
+        .then(response => response.json())
+        .then(data => {
+            // console.log(data);
+            student_table_data.value = data.dataarr.map((item, index) => ({
+                key: index.toString(),
+                no: item.key,
+                sex: item.sex,
+                name: item.name,
+                age: item.age,
+                dept: item.dept,
+                scholarship: item.scholarship,
+            }));
+            student_table_dataSource.value = cloneDeep(student_table_data.value);  // 更新 student_table_dataSource
+            // console.log(student_table_dataSource.value);
+        });
 }
+
+getStudentTable();
+
 </script>
 
 <style scoped>

@@ -67,7 +67,7 @@
     <div class="score-body-table">
         <a-table :columns="score_table_columns" :data-source="score_table_dataSource" bordered size="small">
             <template #bodyCell="{ column, text, record }">
-                <template v-if="['s_no', 's_name', 'c_no', 'c_name', 'score'].includes(column.dataIndex)">
+                <template v-if="['score'].includes(column.dataIndex)">
                     <div>
                         <a-input v-if="score_editableData[record.key]"
                             v-model:value="score_editableData[record.key][column.dataIndex]" style="margin: -5px 0" />
