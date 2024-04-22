@@ -69,7 +69,7 @@
     </div>
     <a-table :columns="student_table_columns" :data-source="student_table_dataSource" bordered>
         <template #bodyCell="{ column, text, record }">
-            <template v-if="['name', 'age', 'key'].includes(column.dataIndex)">
+            <template v-if="['name', 'age'].includes(column.dataIndex)">
                 <div>
                     <a-input v-if="student_table_editableData[record.key]" v-model:value="student_table_editableData[record.key][column.dataIndex]"
                         style="margin: -5px 0" />
@@ -234,13 +234,56 @@ const edit = key => {
 };
 const save = key => {
     Object.assign(student_table_dataSource.value.filter(item => key === item.key)[0], student_table_editableData[key]);
+    // console.log(student_table_dataSource.value.filter(item => key === item.key)[0]);
+    var data_to_update={
+        update_s_no: student_table_editableData[key].no,
+        update_s_name: student_table_editableData[key].name,
+        update_s_sex: student_table_editableData[key].sex,
+        update_s_age: student_table_editableData[key].age,
+        update_s_dept: student_table_editableData[key].dept,
+        update_s_scholarship: student_table_editableData[key].scholarship,
+    }
+    fetch('http://localhost:5880/update/studentinfo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data_to_update),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getStudentTable();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     delete student_table_editableData[key];
 };
 const cancel = key => {
     delete student_table_editableData[key];
 };
 const onDelete = key => {
-    student_table_dataSource.value = student_table_dataSource.value.filter(item => key !== item.key);
+    // console.log(student_table_dataSource.value.filter(item => key === item.key)[0]);
+    // student_table_dataSource.value = student_table_dataSource.value.filter(item => key !== item.key);
+    var data_to_delete={
+        delete_s_no: student_table_dataSource.value.filter(item => key === item.key)[0].no,
+    }
+    fetch('http://localhost:5880/delete/studentinfo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data_to_delete),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getStudentTable();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 };
 
 // Button drawer

@@ -143,13 +143,51 @@ const edit = key => {
 };
 const save = key => {
     Object.assign(course_dataSource.value.filter(item => key === item.key)[0], course_editableData[key]);
+    var data_to_update = {
+        update_c_no: course_editableData[key].c_no,
+        update_c_name: course_editableData[key].c_name,
+        update_c_pno: course_editableData[key].c_pno,
+        update_credit: course_editableData[key].credit,
+    };
+    fetch('http://localhost:5880/update/courseinfo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data_to_update)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getCourseTable();
+        });
     delete course_editableData[key];
 };
 const cancel = key => {
     delete course_editableData[key];
 };
 const onDelete = key => {
-    course_dataSource.value = course_dataSource.value.filter(item => key !== item.key);
+    // course_dataSource.value = course_dataSource.value.filter(item => key !== item.key);
+    var data_to_delete = {
+        delete_c_no: course_dataSource.value.filter(item => key === item.key)[0].c_no,
+    };
+    if ( 0 !== course_dataSource.value.filter(item => key === item.key)[0].c_selectednum ) {
+        console.log('This course has been selected by students, cannot be deleted!');
+        return;
+    }
+    fetch('http://localhost:5880/delete/courseinfo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data_to_delete)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getCourseTable();
+        });
+
 };
 const show_drawer = () => {
     course_newbutton_open.value = true;

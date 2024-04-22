@@ -184,13 +184,46 @@ const edit = key => {
 };
 const save = key => {
     Object.assign(score_table_dataSource.value.filter(item => key === item.key)[0], score_editableData[key]);
+    var data_to_update={
+        update_s_no: score_editableData[key].s_no,
+        update_c_no: score_editableData[key].c_no,
+        update_sc: score_editableData[key].score,
+    }
+    fetch('http://localhost:5880/update/scorerecord', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data_to_update),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getScores(selected_dept.value,selected_cno.value);
+        });
     delete score_editableData[key];
 };
 const cancel = key => {
     delete score_editableData[key];
 };
 const onDelete = key => {
-    score_table_dataSource.value = score_table_dataSource.value.filter(item => key !== item.key);
+    // score_table_dataSource.value = score_table_dataSource.value.filter(item => key !== item.key);
+    var data_to_delete={
+        delete_s_no: score_table_dataSource.value.filter(item => key === item.key)[0].s_no,
+        delete_c_no: score_table_dataSource.value.filter(item => key === item.key)[0].c_no,
+    }
+    fetch('http://localhost:5880/delete/scorerecord', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data_to_delete),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getScores(selected_dept.value,selected_cno.value);
+        });
 };
 const show_drawer = () => {
     score_newbutton_open.value = true;
@@ -228,7 +261,7 @@ const getScores = (dept,cno) => {
     fetch(`http://localhost:5880/query/scoreinfo/${dept}/${cno}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            // console.log(data);
             score_table_data.value = data.dataarr.map((item, index) => ({
                 key: index.toString(),
                 s_no: item.sno,
@@ -257,7 +290,7 @@ const getCourseList = () => {
                 label: item.name,
             }));
             course_list_dataSource.value = cloneDeep(course_list_data.value);
-            console.log(course_list_dataSource.value);
+            // console.log(course_list_dataSource.value);
         });
 };
 

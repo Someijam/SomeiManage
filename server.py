@@ -171,6 +171,84 @@ def add_score():
     db.session.commit()
     return jsonify({'status': 'success'})
 
+# 修改部分
+@app.route('/update/studentinfo', methods=['POST']) # 修改学生信息
+def update_student():
+    # SQL: UPDATE Student SET Sname = '新的姓名', Ssex = '新的性别', Sage = 新的年龄, Sdept = '新的专业系', Scholarship = '新的奖学金情况' WHERE Sno = '200215121';
+    data=request.get_json()
+    # print(data)
+    updatestuStr=f"UPDATE Student SET Sname = '{data['update_s_name']}', Ssex = '{data['update_s_sex']}', Sage = {data['update_s_age']}, Sdept = '{data['update_s_dept']}', Scholarship = '{data['update_s_scholarship']}' WHERE Sno = '{data['update_s_no']}';"
+    print(updatestuStr)
+    updatestuSQL=text(updatestuStr)
+    db.session.execute(updatestuSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+@app.route('/update/courseinfo', methods=['POST']) # 修改课程信息
+def update_course():
+    # SQL: UPDATE Course SET Cname = '新的课程名', Cpno = '新的先修课程号', Ccredit = 新的学分 WHERE Cno = '4';
+    data=request.get_json()
+    # print(data)
+    updatecourseStr=f"UPDATE Course SET Cname = '{data['update_c_name']}', Cpno = '{data['update_c_pno']}', Ccredit = {data['update_credit']} WHERE Cno = '{data['update_c_no']}';"
+    print(updatecourseStr)
+    updatecourseSQL=text(updatecourseStr)
+    db.session.execute(updatecourseSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+@app.route('/update/scorerecord', methods=['POST']) # 修改成绩
+def update_score():
+    # SQL: UPDATE SC SET Grade = 新的成绩 WHERE Sno = '200215121' AND Cno = '2';
+    data=request.get_json()
+    # print(data)
+    updatescoreStr=f"UPDATE SC SET Grade = {data['update_sc']} WHERE Sno = '{data['update_s_no']}' AND Cno = '{data['update_c_no']}';"
+    print(updatescoreStr)
+    updatescoreSQL=text(updatescoreStr)
+    db.session.execute(updatescoreSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+# 删除部分
+@app.route('/delete/studentinfo', methods=['POST']) # 删除学生
+def delete_student():
+    # SQL: DELETE FROM Student WHERE Sno = '200215121';
+    data=request.get_json()
+    # print(data)
+    deletestuStr=f"DELETE FROM Student WHERE Sno = '{data['delete_s_no']}';"
+    deletestuScoreStr=f"DELETE FROM SC WHERE Sno = '{data['delete_s_no']}';"
+    print(deletestuScoreStr)
+    print(deletestuStr)
+    deletestuScoreSQL=text(deletestuScoreStr)
+    deletestuSQL=text(deletestuStr)
+    db.session.execute(deletestuScoreSQL)
+    db.session.execute(deletestuSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+@app.route('/delete/courseinfo', methods=['POST']) # 删除无人选择的某一课程
+def delete_course():
+    # SQL: DELETE FROM Course WHERE Cno = '4';
+    data=request.get_json()
+    # print(data)
+    deletecourseStr=f"DELETE FROM Course WHERE Cno = '{data['delete_c_no']}';"
+    print(deletecourseStr)
+    deletecourseSQL=text(deletecourseStr)
+    db.session.execute(deletecourseSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+@app.route('/delete/scorerecord', methods=['POST']) # 删除成绩
+def delete_score():
+    # SQL: DELETE FROM SC WHERE Sno = '200215121' AND Cno = '2';
+    data=request.get_json()
+    # print(data)
+    deletescoreStr=f"DELETE FROM SC WHERE Sno = '{data['delete_s_no']}' AND Cno = '{data['delete_c_no']}';"
+    print(deletescoreStr)
+    deletescoreSQL=text(deletescoreStr)
+    db.session.execute(deletescoreSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
 if __name__ == '__main__':
     # db.create_all()  # 创建所有表
     app.run(port=5880, host='0.0.0.0')
