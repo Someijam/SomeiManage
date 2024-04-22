@@ -2,18 +2,20 @@
     <div class="score-body-top">
         <a-typography-title :level="3">学生成绩管理</a-typography-title>
         <div>
-            <a-select style="margin-inline-end: .5em;" placeholder="选择专业系">
+            <a-select style="margin-inline-end: .5em; min-width:120px;" placeholder="选择专业系(CS)" @change="onChangeDept">
                 <a-select-option value="IS">IS</a-select-option>
                 <a-select-option value="CS">CS</a-select-option>
                 <a-select-option value="MA">MA</a-select-option>
             </a-select>
-            <a-select style="margin-inline-end: .5em;" placeholder="选择课程">
-                <a-select-option value="sum">总分</a-select-option>
-                <a-select-option value="C1">C1</a-select-option>
-                <a-select-option value="C2">C2</a-select-option>
-                <a-select-option value="C3">C3</a-select-option>
+            <a-select style="margin-inline-end: .5em; min-width:90px;" placeholder="选择课程(1)" @change="onChangeCourse">
+                <!-- <a-select-option v-for="item in course_list_dataSource" :value="item.value">{{ item.label }}</a-select-option> -->
+                <a-select-option v-for="item in course_list_dataSource" :value="item.value" :key="item.value">{{ item.label }}</a-select-option>
+                <!-- <a-select-option value="1">1</a-select-option>
+                <a-select-option value="2">2</a-select-option>
+                <a-select-option value="3">3</a-select-option>
+                <a-select-option value="4">4</a-select-option> -->
             </a-select>
-            <a-button type="primary" style="margin-inline-end: .5em;">
+            <a-button type="primary" style="margin-inline-end: 1.5em;" @click="onRefresh">
                 <template #icon>
                     <ReloadOutlined />
                 </template>
@@ -56,11 +58,11 @@
     <div class="score-body-mid">
         <div>
             <a-descriptions title="统计">
-                <a-descriptions-item label="平均成绩">114</a-descriptions-item>
-                <a-descriptions-item label="最好成绩">514</a-descriptions-item>
-                <a-descriptions-item label="最差成绩">10</a-descriptions-item>
-                <a-descriptions-item label="优秀率">99%</a-descriptions-item>
-                <a-descriptions-item label="不及格人数">0</a-descriptions-item>
+                <a-descriptions-item label="平均成绩">{{ average_score.valueOf() }}</a-descriptions-item>
+                <a-descriptions-item label="最好成绩">{{ max_score.valueOf() }}</a-descriptions-item>
+                <a-descriptions-item label="最差成绩">{{ min_score.valueOf() }}</a-descriptions-item>
+                <a-descriptions-item label="优秀率">{{ excellent_rate.valueOf() }}%</a-descriptions-item>
+                <a-descriptions-item label="不及格人数">{{ fail_num.valueOf() }}</a-descriptions-item>
             </a-descriptions>
         </div>
     </div>
@@ -148,6 +150,22 @@ const score_newbutton_form = reactive({
     addscore_c_no: '',
     addscore_sc_no: '',
 });
+
+// 课程列表
+const course_list_data = []; // {value: '1', label: '数据库'} ...
+const course_list_dataSource = ref(course_list_data);
+
+// 选择框项目
+const selected_dept = ref('CS');
+const selected_cno = ref('1');
+
+// 指标文本
+const average_score = ref('0.0');
+const excellent_rate = ref('0.0');
+const max_score = ref('0');
+const min_score = ref('0');
+const fail_num = ref('0');
+
 const score_newbutton_rules = {
     addscore_s_no: [
         { required: true, message: '请输入学号' },
@@ -181,16 +199,58 @@ const onClose = () => {
     score_newbutton_open.value = false;
 };
 
-for (let i = 0; i < 10; i++) {
-    score_table_data.push({
-        key: i.toString(),
-        s_no: (202112000 + i).toString(),
-        s_name: `Edward No.${i}`,
-        c_no: (i + 1).toString(),
-        c_name: `Course ${i}`,
-        score: Math.floor(Math.random() * 100),
-    });
-}
+const onChangeDept = (value) => {
+    selected_dept.value = value;
+};
+
+const onChangeCourse = (value) => {
+    selected_cno.value = value;
+};
+
+const getScores = (dept,cno) => {
+    fetch(`http://localhost:5880/query/scoreinfo/${dept}/${cno}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            score_table_data.value = data.dataarr.map((item, index) => ({
+                key: index.toString(),
+                s_no: item.sno,
+                s_name: item.sname,
+                c_no: item.cno,
+                c_name: item.cname,
+                score: item.grade,
+                rank: (index + 1).toString(),
+            }));
+            score_table_dataSource.value = cloneDeep(score_table_data.value);
+            average_score.value = data.average_grade;
+            excellent_rate.value = data.excellent_rate;
+            max_score.value = (data.max_grade).toString();
+            min_score.value = (data.min_grade).toString();
+            fail_num.value = (data.fail_count).toString();
+        });
+};
+
+const getCourseList = () => {
+    fetch('http://localhost:5880/query/coursesinfo')
+        .then(response => response.json())
+        .then(data => {
+            // console.log(data);
+            course_list_data.value = data.dataarr.map(item => ({
+                value: item.key,
+                label: item.name,
+            }));
+            course_list_dataSource.value = cloneDeep(course_list_data.value);
+            console.log(course_list_dataSource.value);
+        });
+};
+
+const onRefresh = () => {
+    getScores(selected_dept.value,selected_cno.value);
+    getCourseList();
+};
+
+onRefresh();
+
 </script>
 
 <style scoped>

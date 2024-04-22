@@ -2,7 +2,7 @@
     <div class="course-body-top">
         <a-typography-title :level="3">课程基本信息</a-typography-title>
         <div>
-            <a-button type="primary" style="margin-inline-end: .5em;">
+            <a-button type="primary" style="margin-inline-end: .5em;" @click="getCourseTable">
                 <template #icon>
                     <ReloadOutlined />
                 </template>

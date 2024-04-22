@@ -9,20 +9,32 @@
                     </router-link>
                 </div>
                 <div class="dash-head-navbar-right">
-                    <a-input-search class="dash-head-navbar-search" v-model:value="value" placeholder="输入学号以查找" @search="onSearch" />
+                    <a-input-search class="dash-head-navbar-search" v-model:value="dash_search_input" placeholder="输入学号以查找" @search="onSearch" />
                     <a-drawer v-model:open="dash_search_drawerOpen" class="dash-head-navbar-search-drawer" title="查询结果" placement="right"
                         @after-open-change="afterOpenChange">
                         <a-descriptions title="个人信息" :column="2">
-                            <a-descriptions-item label="姓名">刘伟</a-descriptions-item>
-                            <a-descriptions-item label="学号">202100000</a-descriptions-item>
-                            <a-descriptions-item label="性别">男</a-descriptions-item>
-                            <a-descriptions-item label="年龄">38</a-descriptions-item>
-                            <a-descriptions-item label="专业">CS</a-descriptions-item>
-                            <a-descriptions-item label="奖学金">是</a-descriptions-item>
+                            <a-descriptions-item label="姓名">
+                                {{ dash_search_person_data.s_name }}
+                            </a-descriptions-item>
+                            <a-descriptions-item label="学号">
+                                {{ dash_search_person_data.s_no }}
+                            </a-descriptions-item>
+                            <a-descriptions-item label="性别">
+                                {{ dash_search_person_data.s_sex }}
+                            </a-descriptions-item>
+                            <a-descriptions-item label="年龄">
+                                {{ dash_search_person_data.s_age }}
+                            </a-descriptions-item>
+                            <a-descriptions-item label="专业">
+                                {{ dash_search_person_data.s_dept }}
+                            </a-descriptions-item>
+                            <a-descriptions-item label="奖学金">
+                                {{ dash_search_person_data.s_scholarship }}
+                            </a-descriptions-item>
                         </a-descriptions>
                         <a-divider />
                         <a-typography-title :level="5">选课信息</a-typography-title>
-                        <a-table :columns="dash_search_columns" :data-source="dash_search_data" size="small">
+                        <a-table :columns="dash_search_columns" :data-source="dash_search_course_dataSource" size="small">
                         </a-table>
                     </a-drawer>
                 </div>
@@ -65,6 +77,7 @@
 </template>
 
 <script setup>
+import { cloneDeep } from 'lodash-es';
 import { ref } from 'vue';
 
 const dash_sidebar_selectedKeys = ref(['4']);
@@ -87,85 +100,18 @@ const dash_search_columns = [
     dataIndex: 'c_credit',
   },
 ];
-const dash_search_data = [
-    {
-        key: '1',
-        c_no: 'C001',
-        c_name: '计算机网络',
-        c_score: 90,
-        c_credit: 3,
-    },
-    {
-        key: '2',
-        c_no: 'C002',
-        c_name: '数据库系统',
-        c_score: 85,
-        c_credit: 3,
-    },
-    {
-        key: '3',
-        c_no: 'C003',
-        c_name: '数据结构',
-        c_score: 88,
-        c_credit: 3,
-    },
-    {
-        key: '4',
-        c_no: 'C004',
-        c_name: '操作系统',
-        c_score: 92,
-        c_credit: 3,
-    },
-    {
-        key: '5',
-        c_no: 'C005',
-        c_name: '软件工程',
-        c_score: 87,
-        c_credit: 3,
-    },
-    {
-        key: '6',
-        c_no: 'C006',
-        c_name: '编译原理',
-        c_score: 89,
-        c_credit: 3,
-    },
-    {
-        key: '7',
-        c_no: 'C007',
-        c_name: '计算机组成原理',
-        c_score: 91,
-        c_credit: 3,
-    },
-    {
-        key: '8',
-        c_no: 'C008',
-        c_name: '计算机图形学',
-        c_score: 86,
-        c_credit: 3,
-    },
-    {
-        key: '9',
-        c_no: 'C009',
-        c_name: '计算机视觉',
-        c_score: 93,
-        c_credit: 3,
-    },
-    {
-        key: '10',
-        c_no: 'C010',
-        c_name: '机器学习',
-        c_score: 94,
-        c_credit: 3,
-    },
-    {
-        key: '11',
-        c_no: 'C011',
-        c_name: '机器学习2',
-        c_score: 94,
-        c_credit: 3,
-    },
-];
+const dash_search_course_data = [];
+const dash_search_person_data = ref({
+    key: '1',
+    s_name: '刘伟',
+    s_no: '202100000',
+    s_sex: '男',
+    s_age: 38,
+    s_dept: 'CS',
+    s_scholarship: '是'
+});
+const dash_search_course_dataSource = ref(dash_search_course_data);
+const dash_search_input = ref('');
 
 const onCollapse = (collapsed, type) => {
     console.log(collapsed, type);
@@ -176,7 +122,49 @@ const onBreakpoint = broken => {
 const click_logo = () => {
     dash_sidebar_selectedKeys.value = ['4'];
 };
+
+const getPersonInfo = (sno) => {
+    console.log('getPersonInfo:', sno);
+    fetch(`http://localhost:5880/query/singlestuinfo/${sno}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            dash_search_person_data.value = {
+                key: '1',
+                s_name: data.sname,
+                s_no: data.sno,
+                s_sex: data.ssex,
+                s_age: data.sage,
+                s_dept: data.sdept,
+                s_scholarship: data.scholarship
+            }
+        })
+        .catch(err => console.log(err));
+};
+
+const getStuScoreInfo = (sno) => {
+    console.log('getStuScoreInfo:', sno);
+    fetch(`http://localhost:5880/query/singlestuscore/${sno}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            dash_search_course_data.value = data.dataarr.map((item, index) => {
+                return {
+                    key: index,
+                    c_no: item.cno,
+                    c_name: item.cname,
+                    c_score: item.grade,
+                    c_credit: item.credit
+                }
+            });
+            dash_search_course_dataSource.value = cloneDeep(dash_search_course_data.value);
+        })
+        .catch(err => console.log(err));
+};
+
 const onSearch = () => {
+    getPersonInfo(dash_search_input.value);
+    getStuScoreInfo(dash_search_input.value);
     dash_search_drawerOpen.value = true;
 };
 </script>
