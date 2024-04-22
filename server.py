@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import jsonify
+from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from sqlalchemy import text
@@ -34,6 +35,7 @@ class SC(db.Model):  # 定义一个 SC 模型
     Cno = db.Column(db.String, primary_key=True)
     Grade = db.Column(db.Integer)
 
+# 查询部分
 @app.route('/query/studentsinfo') # 学生信息
 def studentsinfo():
     # SQL: SELECT Sno,Sname,Ssex,Sage,Sdept,Scholarship FROM Student;
@@ -131,6 +133,43 @@ def singlestuscore(sno):
         }
         stuscores_info.append(stuscore_dict)
     return jsonify({'dataname': 'singlestuscore', 'dataarr': stuscores_info})
+
+# 增加部分
+@app.route('/add/studentinfo', methods=['POST']) # 添加新同学
+def add_student():
+    # SQL: INSERT INTO Student VALUES('202110000', '刘坤', '男', 22, 'CS', '否');
+    data=request.get_json()
+    # print(data)
+    addstuStr=f"INSERT INTO Student VALUES('{data['add_s_no']}', '{data['add_s_name']}', '{data['add_s_sex']}', {data['add_s_age']}, '{data['add_s_dept']}', '{data['add_s_scholarship']}');"
+    print(addstuStr)
+    addstuSQL=text(addstuStr)
+    db.session.execute(addstuSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+@app.route('/add/courseinfo', methods=['POST']) # 添加新课程
+def add_course():
+    # SQL: INSERT INTO Course VALUES('4', '操作系统', NULL,3);
+    data=request.get_json()
+    # print(data)
+    addcourseStr=f"INSERT INTO Course VALUES('{data['add_c_no']}', '{data['add_c_name']}', '{data['add_c_pno']}', {data['add_credit']});"
+    print(addcourseStr)
+    addcourseSQL=text(addcourseStr)
+    db.session.execute(addcourseSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+@app.route('/add/scorerecord', methods=['POST']) # 添加成绩
+def add_score():
+    # SQL: INSERT INTO SC VALUES('200215121', '2',85);
+    data=request.get_json()
+    # print(data)
+    addscoreStr=f"INSERT INTO SC VALUES('{data['addscore_s_no']}', '{data['addscore_c_no']}', {data['addscore_sc']});"
+    print(addscoreStr)
+    addscoreSQL=text(addscoreStr)
+    db.session.execute(addscoreSQL)
+    db.session.commit()
+    return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
     # db.create_all()  # 创建所有表

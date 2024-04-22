@@ -40,8 +40,8 @@
                     </a-row>
                     <a-row :gutter="16">
                         <a-col :span="12">
-                            <a-form-item label="成绩" name="addscore_sc_no">
-                                <a-input v-model:value="score_newbutton_form.addscore_sc_no" placeholder="CS101" />
+                            <a-form-item label="成绩" name="addscore_sc">
+                                <a-input v-model:value="score_newbutton_form.addscore_sc" placeholder="CS101" />
                             </a-form-item>
                         </a-col>
                     </a-row>
@@ -49,7 +49,7 @@
                 <template #extra>
                     <a-space>
                         <a-button @click="onClose">取消</a-button>
-                        <a-button type="primary" @click="onClose">确定</a-button>
+                        <a-button type="primary" @click="onSubmit">确定</a-button>
                     </a-space>
                 </template>
             </a-drawer>
@@ -148,7 +148,7 @@ const score_editableData = reactive({});
 const score_newbutton_form = reactive({
     addscore_s_no: '',
     addscore_c_no: '',
-    addscore_sc_no: '',
+    addscore_sc: '',
 });
 
 // 课程列表
@@ -173,7 +173,7 @@ const score_newbutton_rules = {
     addscore_c_no: [
         { required: true, message: '请输入课程编号' },
     ],
-    addscore_sc_no: [
+    addscore_sc: [
         { required: true, message: '请输入成绩' },
     ],
 };
@@ -196,6 +196,23 @@ const show_drawer = () => {
     score_newbutton_open.value = true;
 };
 const onClose = () => {
+    score_newbutton_open.value = false;
+};
+
+const onSubmit = () => {
+    console.log(score_newbutton_form);
+    fetch('http://localhost:5880/add/scorerecord', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(score_newbutton_form),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getScores(selected_dept.value,selected_cno.value);
+        });
     score_newbutton_open.value = false;
 };
 

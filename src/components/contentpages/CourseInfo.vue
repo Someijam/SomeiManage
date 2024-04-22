@@ -39,7 +39,7 @@
                 <template #extra>
                     <a-space>
                         <a-button @click="onClose">取消</a-button>
-                        <a-button type="primary" @click="onClose">添加</a-button>
+                        <a-button type="primary" @click="onSubmit">添加</a-button>
                     </a-space>
                 </template>
             </a-drawer>
@@ -154,6 +154,23 @@ const onDelete = key => {
 const show_drawer = () => {
     course_newbutton_open.value = true;
 };
+
+const onSubmit = () => {
+    fetch('http://localhost:5880/add/courseinfo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(course_newbutton_form)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            getCourseTable();
+        });
+    course_newbutton_open.value = false;
+};
+
 const onClose = () => {
     course_newbutton_open.value = false;
 };
